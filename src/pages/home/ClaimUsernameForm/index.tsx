@@ -1,5 +1,6 @@
 import { zodResolver } from '@hookform/resolvers/zod'
 import { Button, Text, TextInput } from '@ignite-ui/react'
+import { useRouter } from 'next/router'
 import { ArrowRight } from 'phosphor-react'
 import { useForm } from 'react-hook-form'
 import { z } from 'zod'
@@ -26,8 +27,12 @@ export function ClaimUsernameForm() {
     resolver: zodResolver(claimUsernameFormSchema),
   })
 
+  const router = useRouter()
+
   async function handlePreRegister(data: ClaimUsernameFormData) {
-    console.log(data)
+    const { username } = data
+    const searchParams = new URLSearchParams({ username })
+    await router.push(`/register?${searchParams.toString()}`)
   }
   return (
     <>
