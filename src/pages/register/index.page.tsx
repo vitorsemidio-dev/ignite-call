@@ -1,10 +1,13 @@
 import { zodResolver } from '@hookform/resolvers/zod'
 import { Button, Heading, MultiStep, Text, TextInput } from '@ignite-ui/react'
+import { AxiosError } from 'axios'
 import { useRouter } from 'next/router'
 import { ArrowRight } from 'phosphor-react'
 import { useEffect } from 'react'
 import { useForm } from 'react-hook-form'
 import { z } from 'zod'
+import { HTTP_STATUS_CODES } from '../../constants/http'
+import { api } from '../../lib/axios'
 import { Container, Form, FormErro, Header } from './styles'
 
 const registerFormSchema = z.object({
@@ -35,7 +38,22 @@ export default function Register() {
   const router = useRouter()
 
   async function handleRegister(data: RegisterFormData) {
-    console.log(data)
+    try {
+      const createUserDto = {
+        name: data.name,
+        username: data.username,
+      }
+      await api.post('/users', createUserDto)
+    } catch (error) {
+      if (
+        error instanceof AxiosError &&
+        error.response?.status === HTTP_STATUS_CODES.CONFLICT
+      ) {
+        alert('O nome de usuário já está em uso.')
+        return
+      }
+      console.log(error)
+    }
   }
 
   useEffect(() => {
