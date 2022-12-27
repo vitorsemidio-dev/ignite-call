@@ -4,3 +4,8 @@ export function convertDaysToSeconds(days: number) {
   }
   return days * 24 * 60 * 60
 }
+
+export function convertTimeStringToMinutes(timeString: string) {
+  const [hours, minutes] = timeString.split(':').map(Number)
+  return hours * 60 + minutes
+}

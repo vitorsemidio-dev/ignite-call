@@ -5,7 +5,7 @@ import { ConnectItem, ConnectBox, AuthError } from './styles'
 import { signIn, useSession } from 'next-auth/react'
 import { useRouter } from 'next/router'
 
-export default function Register() {
+export default function ConnectCalendar() {
   const session = useSession()
   const router = useRouter()
 
@@ -14,6 +14,10 @@ export default function Register() {
 
   async function handleConnectCalendar() {
     await signIn('google')
+  }
+
+  async function handleNextStep() {
+    router.push('/register/time-intervals')
   }
 
   return (
@@ -49,7 +53,7 @@ export default function Register() {
             permissões de acesso ao Google Calendar.
           </AuthError>
         )}
-        <Button type="submit" disabled={!isSignIn}>
+        <Button type="submit" disabled={!isSignIn} onClick={handleNextStep}>
           Próximo passo <ArrowRight />
         </Button>
       </ConnectBox>
