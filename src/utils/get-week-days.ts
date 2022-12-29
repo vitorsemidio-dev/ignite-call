@@ -1,6 +1,10 @@
 import { firstLetterUpper } from './string'
 
-export function getWeekDays() {
+interface GetWeekDaysParams {
+  short?: boolean
+}
+
+export function getWeekDays({ short }: GetWeekDaysParams = {}) {
   const formatter = new Intl.DateTimeFormat('pt-BR', { weekday: 'long' })
 
   return Array.from(Array(7).keys())
@@ -9,4 +13,5 @@ export function getWeekDays() {
       return formatter.format(date)
     })
     .map((weekDay) => firstLetterUpper(weekDay))
+    .map((weekDay) => (short ? weekDay.slice(0, 3).toUpperCase() : weekDay))
 }
