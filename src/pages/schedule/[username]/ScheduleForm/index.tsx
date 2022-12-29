@@ -1,5 +1,12 @@
 import { CalendarStep } from './CalendarStep'
+import { ConfirmStep } from './ConfirmStep'
 
 export function ScheduleForm() {
-  return <CalendarStep></CalendarStep>
+  const dateSelected = false
+
+  if (dateSelected) {
+    return <ConfirmStep />
+  }
+
+  return <CalendarStep />
 }
