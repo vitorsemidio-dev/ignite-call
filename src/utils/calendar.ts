@@ -26,3 +26,7 @@ export function getFistDaysInMonth(n: number, date: dayjs.Dayjs) {
   })
   return firstDaysInMonth
 }
+
+export function getWeekIndexes() {
+  return [0, 1, 2, 3, 4, 5, 6]
+}
