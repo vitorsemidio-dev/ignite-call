@@ -1,6 +1,11 @@
 import dayjs from 'dayjs'
 import { CaretLeft, CaretRight } from 'phosphor-react'
-import { useState } from 'react'
+import { useMemo, useState } from 'react'
+import {
+  getDaysInMonth,
+  getFistDaysInMonth,
+  getLastDaysInMonth,
+} from '../../utils/calendar'
 import { getWeekDays } from '../../utils/get-week-days'
 import {
   CalendarActions,
@@ -10,6 +15,15 @@ import {
   CalendarHeader,
   CalendarTitle,
 } from './styles'
+interface CalendarWeek {
+  week: number
+  days: Array<{
+    date: dayjs.Dayjs
+    disabled: boolean
+  }>
+}
+
+type CalendarWeeks = CalendarWeek[]
 
 export function Calendar() {
   const shortWeekDays = getWeekDays({ short: true })
@@ -19,18 +33,69 @@ export function Calendar() {
 
   function handlePreviousMonth() {
     const previousMonth = currentDate.subtract(1, 'month')
-
     setCurrentDate(previousMonth)
   }
 
   function handleNextMonth() {
     const nextMonth = currentDate.add(1, 'month')
-
     setCurrentDate(nextMonth)
   }
 
   const currentMonth = currentDate.format('MMMM')
   const currentYear = currentDate.format('YYYY')
+
+  const calendarWeeks = useMemo(() => {
+    const currentMonthFillArray = getDaysInMonth(currentDate)
+
+    const lastDays = currentDate.get('day')
+    const previousMonthFillArray = getLastDaysInMonth(
+      lastDays,
+      currentDate.subtract(1, 'month'),
+    )
+
+    const lastDayInCurrentMonth = currentDate.set(
+      'date',
+      currentDate.daysInMonth(),
+    )
+    const lastWeekDay = lastDayInCurrentMonth.get('day')
+    const daysInNexthMonth = 7 - (lastWeekDay + 1)
+    const nextMonthFillArray = getFistDaysInMonth(
+      daysInNexthMonth,
+      currentDate.add(1, 'month'),
+    )
+
+    const calendarDays = [
+      ...previousMonthFillArray.map((date) => {
+        return { date, disabled: true }
+      }),
+      ...currentMonthFillArray.map((date) => {
+        return { date, disabled: false }
+      }),
+      ...nextMonthFillArray.map((date) => {
+        return { date, disabled: true }
+      }),
+    ]
+
+    const calendarSplitInWeeks = calendarDays.reduce<CalendarWeeks>(
+      (weeks, _, i, original) => {
+        const isNewWeek = i % 7 === 0
+
+        if (isNewWeek) {
+          weeks.push({
+            week: i / 7 + 1,
+            days: original.slice(i, i + 7),
+          })
+        }
+
+        return weeks
+      },
+      [],
+    )
+
+    return calendarSplitInWeeks
+  }, [currentDate])
+
+  console.log(calendarWeeks)
 
   return (
     <CalendarContainer>
@@ -57,44 +122,21 @@ export function Calendar() {
           </tr>
         </thead>
         <tbody>
-          <tr>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td>
-              <CalendarDay>1</CalendarDay>
-            </td>
-            <td>
-              <CalendarDay disabled>2</CalendarDay>
-            </td>
-            <td>
-              <CalendarDay>3</CalendarDay>
-            </td>
-          </tr>
-          <tr>
-            <td>
-              <CalendarDay>4</CalendarDay>
-            </td>
-            <td>
-              <CalendarDay>5</CalendarDay>
-            </td>
-            <td>
-              <CalendarDay>6</CalendarDay>
-            </td>
-            <td>
-              <CalendarDay>7</CalendarDay>
-            </td>
-            <td>
-              <CalendarDay>8</CalendarDay>
-            </td>
-            <td>
-              <CalendarDay disabled>9</CalendarDay>
-            </td>
-            <td>
-              <CalendarDay>10</CalendarDay>
-            </td>
-          </tr>
+          {calendarWeeks.map(({ week, days }) => {
+            return (
+              <tr key={week}>
+                {days.map(({ date, disabled }) => {
+                  return (
+                    <td key={date.toString()}>
+                      <CalendarDay disabled={disabled}>
+                        {date.get('date')}
+                      </CalendarDay>
+                    </td>
+                  )
+                })}
+              </tr>
+            )
+          })}
         </tbody>
       </CalendarBody>
     </CalendarContainer>
