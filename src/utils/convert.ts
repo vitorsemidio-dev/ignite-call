@@ -9,3 +9,7 @@ export function convertTimeStringToMinutes(timeString: string) {
   const [hours, minutes] = timeString.split(':').map(Number)
   return hours * 60 + minutes
 }
+
+export function convertMinutesToHour(minutes: number): number {
+  return minutes / 60
+}
