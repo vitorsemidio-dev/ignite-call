@@ -79,9 +79,13 @@ export default async function handler(
   })
 
   const availableTimes = possibleTimes.filter((time) => {
-    return !blockedTimes.some(
+    const isTimeBlocked = blockedTimes.some(
       (blockedTime) => blockedTime.date.getHours() === time,
     )
+    const isTimeInPast = referenceDate.set('hour', time).isBefore(new Date())
+
+    const isAvailable = !isTimeBlocked && !isTimeInPast
+    return isAvailable
   })
 
   return res.json({ possibleTimes, availableTimes })

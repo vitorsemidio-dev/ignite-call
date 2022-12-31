@@ -35,6 +35,7 @@ interface CalendarProps {
 
 interface BlockedDates {
   blockedWeekDays: number[]
+  blockedDates: number[]
 }
 
 export function Calendar({ selectedDate, onDateSelected }: CalendarProps) {
@@ -61,7 +62,7 @@ export function Calendar({ selectedDate, onDateSelected }: CalendarProps) {
   const username = String(router.query.username)
 
   const { data: blockedDates } = useQuery<BlockedDates>(
-    ['blocked-dates', currentDate.get('year'), currentDate.get('month')],
+    ['blocked-dates', currentDate.get('year'), currentDate.get('month') + 1],
     async () => {
       const response = await api.get(`/users/${username}/blocked-dates`, {
         params: {
@@ -105,10 +106,13 @@ export function Calendar({ selectedDate, onDateSelected }: CalendarProps) {
       }),
       ...currentMonthFillArray.map((date) => {
         const isPast = date.endOf('day').isBefore(new Date())
-        const isBlockedWeekDay = blockedDates?.blockedWeekDays.includes(
+        const isBlockedWeekDay = blockedDates.blockedWeekDays.includes(
           date.get('day'),
         )
-        const isDisabled = isPast || isBlockedWeekDay
+        const isBlockedDate = blockedDates.blockedDates.includes(
+          date.get('date'),
+        )
+        const isDisabled = isPast || isBlockedWeekDay || isBlockedDate
         return { date, disabled: isDisabled }
       }),
       ...nextMonthFillArray.map((date) => {
