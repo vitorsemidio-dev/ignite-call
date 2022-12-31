@@ -98,7 +98,6 @@ export default function TimeIntervals() {
     data: TimeIntervalsFormInput | TimeIntervalsFormOutput,
   ) {
     const formData = data as TimeIntervalsFormOutput
-    console.log(formData)
     await api.post('/intervals', formData)
     await handleNextStep()
   }

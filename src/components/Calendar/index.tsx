@@ -102,8 +102,6 @@ export function Calendar({ selectedDate, onDateSelected }: CalendarProps) {
     return calendarSplitInWeeks
   }, [currentDate])
 
-  console.log(calendarWeeks)
-
   return (
     <CalendarContainer>
       <CalendarHeader>

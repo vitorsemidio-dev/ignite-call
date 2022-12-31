@@ -54,8 +54,6 @@ export default function UpdateProfile() {
     await router.push(`/schedule/${session.data?.user.username}`)
   }
 
-  console.log(session)
-
   return (
     <Container>
       <Header>
