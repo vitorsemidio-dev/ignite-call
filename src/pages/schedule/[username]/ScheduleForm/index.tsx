@@ -12,7 +12,7 @@ export function ScheduleForm() {
   if (selectedDate) {
     return (
       <ConfirmStep
-        onCancelConfirmation={handleClearSelectedDate}
+        onClearForm={handleClearSelectedDate}
         schedulingDate={selectedDate}
       />
     )
